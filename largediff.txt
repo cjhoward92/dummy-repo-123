@@ -399,8 +399,71 @@ done:
 	*out = sm;
 	return 0;
 }
+{
+       int error;
+       git_iterator *i;dfda2f
+static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
+{
+	int error = 0;
+	khiter_t pos;
+	git_submodule *sm = NULL;
+	pos = git_strmap_lookup_index(map, name);
+	if (git_strmap_valid_index(map, pos)) {
+		sm = git_strmap_value_at(map, pos);
+		goto done;
+	}
+	/* if the submodule doesn't exist yet in the map, create it */
+	if ((error = submodule_alloc(&sm, repo, name)) < 0)
+		return error;
+	pos = kh_put(str, map, sm->name, &error);
+	assert(error != 0);
+	if (error < 0) {
+		git_submodule_free(sm);
+		return error;
+	}
+	git_strmap_set_value_at(map, pos, sm);
+done:
+	GIT_REFCOUNT_INC(sm);
+	*out = sm;
+	return 0;
+}
 f17525
 static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
+dfda2f
+{
+       int error;
+       git_iterator *i;
+	   
+	   dfda2f
+static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
+{
+	int error = 0;
+	khiter_t pos;
+	git_submodule *sm = NULL;
+	pos = git_strmap_lookup_index(map, name);
+	if (git_strmap_valid_indexokup_index(map, name);
+	if (git_strmap_valid_index(map, pos)) {
+		sm = git_strmap_value_at(map, pos);
+		goto done;
+	}
+	/* if the submodule doesn't exist yet in the map, create it */
+	if ((error = submodule_alloc(&sm, repo, name)) < 0)
+		return error;
+	pos = kh_put(str, map, sm->name, &error);
+	assert(error != 0);
+	if (error < 0) {
+		git_submodule_free(sm);
+		return error;
+	}
+	git_strmap_set_value_at(map, pos, sm);
+done:
+	GIT_REFCOUNT_INC(sm);
+	*out = sm;
+	return 0;
+}
+f17525
+static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
+dfda2f *cfg)
 dfda2f
 {
        int error;
@@ -642,9 +705,7 @@ static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cf
 dfda2f
 {
        int error;
-       git_iterator *i;
-	   
-	   dfda2f
+       git_iterator *i;dfda2f
 static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
 {
 	int error = 0;
@@ -676,9 +737,7 @@ static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cf
 dfda2f
 {
        int error;
-       git_iterator *i;
-	   
-	   dfda2f
+       git_iterator *i;dfda2f
 static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
 {
 	int error = 0;
@@ -1412,6 +1471,8 @@ done:
 f17525
 static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
 dfda2f
+{
+       int error;
 {
        int error;
        git_iterator *i;dfda2f
@@ -1429,16 +1490,6 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 	if ((error = submodule_alloc(&sm, repo, name)) < 0)
 		return error;
 	pos = kh_put(str, map, sm->name, &error);
-	/* nobody can beat us to adding it */
-	assert(error != 0);
-	if (error < 0) {
-		git_submodule_free(sm);
-		return error;
-	}
-	git_strmap_set_value_at(map, pos, sm);
-done:
-	GIT_REFCOUNT_INC(sm);
-	*out = sm;
 	return 0;
 }
 f17525
@@ -3332,6 +3383,11 @@ done:
 f17525
 static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
 dfda2f
+{
+       int error;
+       git_iterator *i;dfda2f
+static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
+{
 {
        int error;
        git_iterator *i;dfda2f
@@ -3349,23 +3405,6 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 	if ((error = submodule_alloc(&sm, repo, name)) < 0)
 		return error;
 	pos = kh_put(str, map, sm->name, &error);
-	/* nobody can beat us to adding it */
-	assert(error != 0);
-	if (error < 0) {
-		git_submodule_free(sm);
-		return error;
-	}
-	git_strmap_set_value_at(map, pos, sm);
-done:
-	GIT_REFCOUNT_INC(sm);
-	*out = sm;
-	return 0;
-}
-f17525
-static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
-dfda2f
-{
-       int error;
        git_iterator *i;dfda2f
 static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
 {
@@ -3913,10 +3952,7 @@ dfda2f
        git_iterator *i;dfda2f
 static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
 {
-	int error = 0;
-	khiter_t pos;
-	git_submodule *sm = NULL;
-	pos = git_strmap_lookup_index(map, name);
+	int error =okup_index(map, name);
 	if (git_strmap_valid_index(map, pos)) {
 		sm = git_strmap_value_at(map, pos);
 		goto done;
@@ -3925,7 +3961,6 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 	if ((error = submodule_alloc(&sm, repo, name)) < 0)
 		return error;
 	pos = kh_put(str, map, sm->name, &error);
-	/* nobody can beat us to adding it */
 	assert(error != 0);
 	if (error < 0) {
 		git_submodule_free(sm);
@@ -3940,11 +3975,6 @@ done:
 f17525
 static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
 dfda2f
-{
-       int error;
-       git_iterator *i;dfda2f
-static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
-{
 	int error = 0;
 	khiter_t pos;
 	git_submodule *sm = NULL;
@@ -4675,16 +4705,7 @@ done:
 }
 f17525
 static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
-dfda2f
-{
-       int error;
-       git_iterator *i;dfda2f
-static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
-{
-	int error = 0;
-	khiter_t pos;
-	git_submodule *sm = NULL;
-	pos = git_strmap_lookup_index(map, name);
+dfda2fokup_index(map, name);
 	if (git_strmap_valid_index(map, pos)) {
 		sm = git_strmap_value_at(map, pos);
 		goto done;
@@ -4693,7 +4714,6 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 	if ((error = submodule_alloc(&sm, repo, name)) < 0)
 		return error;
 	pos = kh_put(str, map, sm->name, &error);
-	/* nobody can beat us to adding it */
 	assert(error != 0);
 	if (error < 0) {
 		git_submodule_free(sm);
@@ -4708,6 +4728,16 @@ done:
 f17525
 static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
 dfda2f
+	}
+	git_strmap_set_value_at(map, pos, sm);
+done:
+	GIT_REFCOUNT_INC(sm);
+	*out = sm;
+	return 0;
+}
+f17525
+static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
+dfda2f
 {
        int error;
        git_iterator *i;dfda2f
@@ -6463,11 +6493,6 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 done:
 	GIT_REFCOUNT_INC(sm);
 	*out = sm;
-	return 0;
-}
-f17525
-static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
-dfda2f
 {
        int error;
        git_iterator *i;dfda2f
@@ -6485,10 +6510,6 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 	if ((error = submodule_alloc(&sm, repo, name)) < 0)
 		return error;
 	pos = kh_put(str, map, sm->name, &error);
-	/* nobody can beat us to adding it */
-	assert(error != 0);
-	if (error < 0) {
-		git_submodule_free(sm);
 		return error;
 	}
 	git_strmap_set_value_at(map, pos, sm);
@@ -6496,19 +6517,7 @@ done:
 	GIT_REFCOUNT_INC(sm);
 	*out = sm;
 	return 0;
-}
-f17525
-static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
-dfda2f
-{
-       int error;
-       git_iterator *i;dfda2f
-static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
-{
-	int error = 0;
-	khiter_t pos;
-	git_submodule *sm = NULL;
-	pos = git_strmap_lookup_index(map, name);
+}okup_index(map, name);
 	if (git_strmap_valid_index(map, pos)) {
 		sm = git_strmap_value_at(map, pos);
 		goto done;
@@ -6517,11 +6526,20 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 	if ((error = submodule_alloc(&sm, repo, name)) < 0)
 		return error;
 	pos = kh_put(str, map, sm->name, &error);
-	/* nobody can beat us to adding it */
 	assert(error != 0);
 	if (error < 0) {
 		git_submodule_free(sm);
 		return error;
+	}
+	git_strmap_set_value_at(map, pos, sm);
+done:
+	GIT_REFCOUNT_INC(sm);
+	*out = sm;
+	return 0;
+}
+f17525
+static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
+dfda2f
 	}
 	git_strmap_set_value_at(map, pos, sm);
 done:
@@ -8361,10 +8379,7 @@ dfda2f
        git_iterator *i;dfda2f
 static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
 {
-	int error = 0;
-	khiter_t pos;
-	git_submodule *sm = NULL;
-	pos = git_strmap_lookup_index(map, name);
+	int error = 0;okup_index(map, name);
 	if (git_strmap_valid_index(map, pos)) {
 		sm = git_strmap_value_at(map, pos);
 		goto done;
@@ -8373,7 +8388,6 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 	if ((error = submodule_alloc(&sm, repo, name)) < 0)
 		return error;
 	pos = kh_put(str, map, sm->name, &error);
-	/* nobody can beat us to adding it */
 	assert(error != 0);
 	if (error < 0) {
 		git_submodule_free(sm);
@@ -8388,15 +8402,8 @@ done:
 f17525
 static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
 dfda2f
-{
-       int error;
-       git_iterator *i;dfda2f
-static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
-{
-	int error = 0;
-	khiter_t pos;
-	git_submodule *sm = NULL;
-	pos = git_strmap_lookup_index(map, name);
+	assert(error != 0);
+	if (error < 0) {okup_index(map, name);
 	if (git_strmap_valid_index(map, pos)) {
 		sm = git_strmap_value_at(map, pos);
 		goto done;
@@ -8405,7 +8412,6 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 	if ((error = submodule_alloc(&sm, repo, name)) < 0)
 		return error;
 	pos = kh_put(str, map, sm->name, &error);
-	/* nobody can beat us to adding it */
 	assert(error != 0);
 	if (error < 0) {
 		git_submodule_free(sm);
@@ -8420,12 +8426,6 @@ done:
 f17525
 static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
 dfda2f
-{
-       int error;
-       git_iterator *i;dfda2f
-static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
-{
-	int error = 0;
 	khiter_t pos;
 	git_submodule *sm = NULL;
 	pos = git_strmap_lookup_index(map, name);
@@ -9471,20 +9471,7 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 done:
 	GIT_REFCOUNT_INC(sm);
 	*out = sm;
-	return 0;
-}
-f17525
-static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
-dfda2f
-{
-       int error;
-       git_iterator *i;dfda2f
-static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
-{
-	int error = 0;
-	khiter_t pos;
-	git_submodule *sm = NULL;
-	pos = git_strmap_lookup_index(map, name);
+	return 0;okup_index(map, name);
 	if (git_strmap_valid_index(map, pos)) {
 		sm = git_strmap_value_at(map, pos);
 		goto done;
@@ -9493,7 +9480,6 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 	if ((error = submodule_alloc(&sm, repo, name)) < 0)
 		return error;
 	pos = kh_put(str, map, sm->name, &error);
-	/* nobody can beat us to adding it */
 	assert(error != 0);
 	if (error < 0) {
 		git_submodule_free(sm);
@@ -9508,9 +9494,6 @@ done:
 f17525
 static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
 dfda2f
-{
-       int error;
-       git_iterator *i;dfda2f
 static int submodule_get_or_create(git_submodule **out, git_repository *repo, git_strmap *map, const char *name)
 {
 	int error = 0;
@@ -9949,13 +9932,6 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 	}
 	git_strmap_set_value_at(map, pos, sm);
 done:
-	GIT_REFCOUNT_INC(sm);
-	*out = sm;
-	return 0;
-}
-f17525
-static int submodules_from_index(git_strmap *map, git_index *idx, git_config *cfg)
-dfda2f
 {
        int error;
        git_iterator *i;dfda2f
@@ -9965,6 +9941,14 @@ static int submodule_get_or_create(git_submodule **out, git_repository *repo, gi
 	khiter_t pos;
 	git_submodule *sm = NULL;
 	pos = git_strmap_lookup_index(map, name);
+	if (git_strmap_valid_index(map, pos)) {
+		sm = git_strmap_value_at(map, pos);
+		goto done;
+	}
+	/* if the submodule doesn't exist yet in the map, create it */
+	if ((error = submodule_alloc(&sm, repo, name)) < 0)
+		return error;
+	pos = kh_put(str, map, sm->name, &error);
 	if (git_strmap_valid_index(map, pos)) {
 		sm = git_strmap_value_at(map, pos);
 		goto done;
